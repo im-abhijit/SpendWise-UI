@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type SignUpDialogProps = {
   triggerLabel?: string;
@@ -20,6 +21,7 @@ export const SignUpDialog = ({ triggerLabel = "Sign up", size = "sm", mode = "si
   const [error, setError] = useState<string | null>(null);
 
   const API_BASE_URL = "https://mesothelial-sonya-deferentially.ngrok-free.dev";
+  const navigate = useNavigate();
 
   async function postJson<T>(path: string, body: unknown): Promise<T> {
     const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -46,8 +48,8 @@ export const SignUpDialog = ({ triggerLabel = "Sign up", size = "sm", mode = "si
         { whatsappNumber: phone, otp },
       );
       localStorage.setItem("authToken", data.token);
-      // Navigate to dashboard after successful verification
-      window.location.assign("/dashboard");
+      // Navigate to dashboard after successful verification (SPA navigation)
+      navigate("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to verify OTP";
       setError(message);
