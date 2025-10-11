@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { WhatsAppQRDialog } from "@/components/WhatsAppQRDialog";
+import { SignUpDialog } from "@/components/SignUpDialog";
 import { MessageSquare } from "lucide-react";
 
 export const Navbar = () => {
@@ -28,16 +28,8 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" asChild>
-              <a href="/dashboard">Log in</a>
-            </Button>
-            <WhatsAppQRDialog
-              phone="1234567890"
-              text="Hi SpendWise! I'd like to get started."
-              triggerLabel="Try on WhatsApp"
-              triggerVariant="hero"
-              size="sm"
-            />
+            <SignUpDialog triggerLabel="Log in" size="sm" mode="login" />
+            <SignUpDialog triggerLabel="Sign up" size="sm" />
           </div>
         </div>
       </div>
