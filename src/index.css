@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Dark fintech theme - SpendWise */
+    --background: 210 29% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 215 25% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 215 25% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 162 100% 50%;
+    --primary-foreground: 210 29% 7%;
+
+    --secondary: 199 93% 60%;
+    --secondary-foreground: 210 29% 7%;
+
+    --muted: 215 20% 15%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 162 100% 50%;
+    --accent-foreground: 210 29% 7%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 20% 20%;
+    --input: 215 20% 20%;
+    --ring: 162 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(162, 100%, 50%) 0%, hsl(199, 93%, 60%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(210, 29%, 7%) 0%, hsl(215, 25%, 10%) 100%);
+    --gradient-glow: radial-gradient(circle at 50% 0%, hsl(162, 100%, 50%, 0.15) 0%, transparent 50%);
+
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(162, 100%, 50%, 0.3);
+    --shadow-card: 0 10px 30px -10px hsl(0, 0%, 0%, 0.5);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom utilities */
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .card-glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
