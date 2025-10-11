@@ -101,8 +101,11 @@ export const SpendingCharts = () => {
           <CardTitle>Spending Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{ spend: { label: "Spend", color: "hsl(142, 76%, 45%)" } }} className="h-[360px]">
-            <LineChart data={lineData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+          <ChartContainer
+            config={{ spend: { label: "Spend", color: "hsl(142, 76%, 45%)" } }}
+            className="h-[360px] px-2 sm:px-4"
+          >
+            <LineChart data={lineData} margin={{ left: 16, right: 16, top: 12, bottom: 12 }}>
               <defs>
                 <linearGradient id="spendGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--color-spend)" stopOpacity={0.9} />
@@ -110,8 +113,8 @@ export const SpendingCharts = () => {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" opacity={0.35} />
-              <XAxis dataKey="month" tickMargin={6} />
-              <YAxis tickMargin={6} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
+              <XAxis dataKey="month" tickMargin={8} interval={0} />
+              <YAxis tickMargin={8} domain={[0, "dataMax + 5000"]} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
               <ChartTooltip
                 content={
                   <ChartTooltipContent
