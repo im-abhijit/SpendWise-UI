@@ -1,32 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMemo, useState } from "react";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-} from "@/components/ui/chart";
-import {
-  Pie,
-  PieChart,
-  Cell,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  LabelList,
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  LabelList,
   Area,
 } from "recharts";
-import { useMemo } from "react";
-import { format } from "date-fns";
 
 const pieData = [
-  { name: "Food", value: 12000, fill: "var(--color-food)" },
-  { name: "Travel", value: 8000, fill: "var(--color-travel)" },
-  { name: "Rent", value: 25000, fill: "var(--color-rent)" },
-  { name: "Shopping", value: 6000, fill: "var(--color-shopping)" },
+  { name: "Food", value: 12000, fill: "#10b981" },
+  { name: "Travel", value: 8000, fill: "#3b82f6" },
+  { name: "Rent", value: 25000, fill: "#8b5cf6" },
+  { name: "Shopping", value: 6000, fill: "#06b6d4" },
 ];
 
 const lineData = [
@@ -46,95 +40,127 @@ export const SpendingCharts = () => {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="rounded-2xl">
+      <Card className="rounded-2xl shadow-md">
         <CardHeader>
           <CardTitle>Category-wise Spending</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer
-            config={{
-              food: { label: "Food", color: "hsl(142, 76%, 45%)" },
-              travel: { label: "Travel", color: "hsl(217, 91%, 60%)" },
-              rent: { label: "Rent", color: "hsl(262, 83%, 58%)" },
-              shopping: { label: "Shopping", color: "hsl(192, 95%, 68%)" },
-            }}
-            className="h-[360px]"
-          >
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={110}
-                paddingAngle={2}
-                labelLine={false}
-                label={(p) => `${p.name}: ${Math.round(((p.value as number) / totalPie) * 100)}%`}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-                <LabelList dataKey="value" position="outside" formatter={(v: number) => currency(v)} />
-              </Pie>
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(value, name) => (
-                      <div className="flex w-full items-center justify-between gap-6">
-                        <span className="text-muted-foreground">{name as string}</span>
-                        <span className="font-mono font-medium">{currency(Number(value))}</span>
-                      </div>
-                    )}
-                  />
-                }
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-            </PieChart>
-          </ChartContainer>
+          <div className="grid md:grid-cols-2 gap-4 items-center">
+            <div className="h-[260px] sm:h-[320px] px-2 sm:px-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  {(() => {
+                    const [activeIndex, setActiveIndex] = (useState as typeof import("react").useState)(-1);
+                    return (
+                      <>
+                        <Pie
+                          data={pieData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={48}
+                          outerRadius={96}
+                          paddingAngle={2}
+                          labelLine={false}
+                          cornerRadius={6}
+                          onMouseEnter={(_, idx) => setActiveIndex(idx)}
+                          onMouseLeave={() => setActiveIndex(-1)}
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={entry.fill}
+                              stroke={index === activeIndex ? "#ffffff" : undefined}
+                              strokeWidth={index === activeIndex ? 2 : 0}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: number, _name, props: any) => {
+                            const name = props?.payload?.name as string;
+                            const percent = props && props.payload ? Math.round((props.payload.value / totalPie) * 100) : 0;
+                            return [
+                              `${currency(Number(value))} (${percent}%)`,
+                              name,
+                            ];
+                          }}
+                        />
+                        <Legend verticalAlign="bottom" height={24} />
+                      </>
+                    );
+                  })()}
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-muted-foreground">
+                    <th className="py-2 pr-2">Category</th>
+                    <th className="py-2 pr-2">Amount</th>
+                    <th className="py-2 text-right">Percent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pieData.map((row) => {
+                    const percent = Math.round((row.value / totalPie) * 100);
+                    return (
+                      <tr key={row.name} className="border-t">
+                        <td className="py-2 pr-2">
+                          <span className="inline-flex items-center gap-2">
+                            <span className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: row.fill }} />
+                            {row.name}
+                          </span>
+                        </td>
+                        <td className="py-2 pr-2">{currency(row.value)}</td>
+                        <td className="py-2 text-right">{percent}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl">
+      <Card className="rounded-2xl shadow-md">
         <CardHeader>
           <CardTitle>Spending Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer
-            config={{ spend: { label: "Spend", color: "hsl(142, 76%, 45%)" } }}
-            className="h-[360px] px-2 sm:px-4"
-          >
-            <LineChart data={lineData} margin={{ left: 16, right: 16, top: 12, bottom: 12 }}>
-              <defs>
-                <linearGradient id="spendGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-spend)" stopOpacity={0.9} />
-                  <stop offset="95%" stopColor="var(--color-spend)" stopOpacity={0.05} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.35} />
-              <XAxis dataKey="month" tickMargin={8} interval={0} />
-              <YAxis tickMargin={8} domain={[0, "dataMax + 5000"]} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(value) => (
-                      <span className="font-mono font-medium">{currency(Number(value))}</span>
-                    )}
-                  />
-                }
-              />
-              <Area type="monotone" dataKey="spend" stroke="none" fill="url(#spendGradient)" />
-              <Line
-                type="monotone"
-                dataKey="spend"
-                stroke="var(--color-spend)"
-                strokeWidth={2.25}
-                dot={{ r: 2.5 }}
-                activeDot={{ r: 5 }}
-              />
-            </LineChart>
-          </ChartContainer>
+          <div className="h-[300px] sm:h-[320px] px-2 sm:px-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lineData} margin={{ left: 18, right: 18, top: 16, bottom: 16 }}>
+                <defs>
+                  <linearGradient id="spendGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.35} />
+                <XAxis dataKey="month" tickMargin={8} interval={0} />
+                <YAxis
+                  tickMargin={8}
+                  domain={["dataMin - 2000", "dataMax + 2000"]}
+                  tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
+                />
+                <Tooltip formatter={(value: number) => currency(Number(value))} />
+                <Area type="monotone" dataKey="spend" stroke="none" fill="url(#spendGradient)" />
+                <Line
+                  type="monotone"
+                  dataKey="spend"
+                  stroke="#10b981"
+                  strokeWidth={2.25}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  dot={{ r: 2.25 }}
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>

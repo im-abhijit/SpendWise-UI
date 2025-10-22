@@ -35,7 +35,7 @@ export const SidebarNav = ({ children, active = "dashboard" }: SidebarNavProps) 
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="mt-1">
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <SidebarTrigger variant="ghost" size="sm" className="justify-start">
